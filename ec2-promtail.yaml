@@ -1,0 +1,29 @@
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 0
+
+clients:
+  - url: <url>
+
+positions:
+  filename: /opt/promtail/positions.yaml
+
+scrape_configs:
+  - job_name: ec2-logs
+    ec2_sd_configs:
+      - region: us-west-2
+        access_key: <key>
+        secret_key: <secret>
+    relabel_configs:
+      - source_labels: [__meta_ec2_tag_Name]
+        target_label: name
+        action: replace
+      - source_labels: [__meta_ec2_instance_id]
+        target_label: instance
+        action: replace
+      - source_labels: [__meta_ec2_availability_zone]
+        target_label: zone
+        action: replace
+      - action: replace
+        replacement: /usr/games/minecraft/logs/**.log
+        target_label: __path__
